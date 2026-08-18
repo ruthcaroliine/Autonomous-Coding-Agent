@@ -21,11 +21,11 @@ This repository is being developed in stages. The initial focus is the backend a
 
 | Area | Status |
 | --- | --- |
-| Repository scaffold | In progress |
-| FastAPI backend | Planned |
+| Repository scaffold | Scaffolded |
+| FastAPI backend | Skeleton implemented |
 | LLM code generation | Planned |
 | Docker sandbox execution | Planned |
-| Retry/self-correction loop | Planned |
+| Retry/self-correction loop | Stubbed control flow |
 | Result validation | Planned |
 | Frontend demo | Planned |
 
@@ -261,19 +261,25 @@ Example target goals for V1:
 - Build a frontend showing task input, attempts, errors, fixes, and final artifacts.
 - Display generated charts and downloadable files.
 
-## Initial Project Structure
+## Current Project Structure
 
 ```text
 .
-- backend/
-  - app/
-    - agent/
-    - api/
-    - llm/
-    - sandbox/
-    - tools/
-- sandbox/
+- app/
+  - main.py
+  - config.py
+  - agent/
+    - controller.py
+    - state.py
+  - api/
+    - routes.py
+  - sandbox/
+    - executor.py
+  - tools/
+    - manager.py
 - tests/
+  - test_state.py
+- requirements.txt
 - README.md
 - LICENSE
 - .gitignore
