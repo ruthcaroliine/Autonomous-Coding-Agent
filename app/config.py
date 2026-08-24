@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     max_retry_attempts: int = 3
     network_enabled: bool = False
     llm_model: str = "gpt-5"
+    sandbox_image: str = "coding-agent-sandbox:latest"
 
     model_config = SettingsConfigDict(env_prefix="AGENT_")
 

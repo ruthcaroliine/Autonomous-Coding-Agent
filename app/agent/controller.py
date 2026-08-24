@@ -1,10 +1,12 @@
 from app.agent.state import AgentState, Attempt, AttemptOutcome, ExecutionObservation
 from app.config import Settings, settings
+from app.sandbox.executor import DockerSandboxExecutor
 
 
 class AgentController:
     def __init__(self, app_settings: Settings = settings) -> None:
         self.settings = app_settings
+        self.executor = DockerSandboxExecutor(app_settings)
 
     def run(self, task: str) -> AgentState:
         state = AgentState(
@@ -42,6 +44,7 @@ class AgentController:
                     )
                 )
                 state.final_answer = "Task completed successfully."
+                state.succeeded = True
                 break
 
             diagnosis = self._diagnose_invalid_result(observation)
@@ -75,10 +78,7 @@ class AgentController:
         )
 
     def _execute_code(self, code: str) -> ExecutionObservation:
-        raise NotImplementedError(
-            "Phase 2 implements Docker sandbox execution. "
-            "The controller loop is wired, but code execution is not available yet."
-        )
+        return self.executor.execute(code)
 
     def _validate_result(
         self,

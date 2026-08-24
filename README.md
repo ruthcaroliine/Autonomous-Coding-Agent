@@ -90,6 +90,18 @@ Planned V1 sandbox packages:
 - `numpy`
 - `matplotlib`
 
+Build the sandbox image:
+
+```bash
+docker build -f docker/sandbox.Dockerfile -t coding-agent-sandbox .
+```
+
+Run the Phase 2 integration tests after Docker is available and the image is built:
+
+```bash
+pytest tests/test_sandbox_integration.py
+```
+
 ## Agent State Model
 
 The agent will maintain structured state for every run so each decision is traceable.
@@ -280,6 +292,8 @@ Example target goals for V1:
 - tests/
   - test_state.py
 - requirements.txt
+- docker/
+  - sandbox.Dockerfile
 - README.md
 - LICENSE
 - .gitignore
