@@ -4,3 +4,5 @@ pydantic-settings
 pytest
 httpx
 docker
+google-generativeai
+python-dotenv

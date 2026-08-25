@@ -93,7 +93,7 @@ Planned V1 sandbox packages:
 Build the sandbox image:
 
 ```bash
-docker build -f docker/sandbox.Dockerfile -t coding-agent-sandbox .
+docker build -f docker-build/sandbox.Dockerfile -t coding-agent-sandbox .
 ```
 
 Run the Phase 2 integration tests after Docker is available and the image is built:

@@ -7,10 +7,11 @@ class Settings(BaseSettings):
     cpu_limit: float = 1.0
     max_retry_attempts: int = 3
     network_enabled: bool = False
-    llm_model: str = "gpt-5"
+    llm_model: str = "gemini-2.5-flash"
+    google_api_key: str = ""
     sandbox_image: str = "coding-agent-sandbox:latest"
 
-    model_config = SettingsConfigDict(env_prefix="AGENT_")
+    model_config = SettingsConfigDict(env_prefix="AGENT_", env_file=".env")
 
 
 settings = Settings()

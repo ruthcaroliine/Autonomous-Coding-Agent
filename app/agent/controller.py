@@ -1,7 +1,7 @@
 from app.agent.state import AgentState, Attempt, AttemptOutcome, ExecutionObservation
 from app.config import Settings, settings
 from app.sandbox.executor import DockerSandboxExecutor
-
+from app.agent.llm import generate_code
 
 class AgentController:
     def __init__(self, app_settings: Settings = settings) -> None:
@@ -72,10 +72,19 @@ class AgentController:
         return state
 
     def _generate_code(self, state: AgentState) -> str:
-        raise NotImplementedError(
-            "Phase 3 implements LLM code generation. "
-            "The controller loop is wired, but code generation is not available yet."
-        )
+        prior_diagnosis = state.attempts[-1].diagnosis if state.attempts else None
+        code = generate_code(state.task, prior_diagnosis)
+        return self._strip_markdown_fences(code)
+
+    def _strip_markdown_fences(self, code: str) -> str:
+        code = code.strip()
+        if code.startswith("```"):
+            lines = code.split("\n")
+            lines = lines[1:]  # drop opening ```python or ```
+            if lines and lines[-1].strip() == "```":
+                lines = lines[:-1]  # drop closing ```
+            code = "\n".join(lines)
+        return code.strip()
 
     def _execute_code(self, code: str) -> ExecutionObservation:
         return self.executor.execute(code)
