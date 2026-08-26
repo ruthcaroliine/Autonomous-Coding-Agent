@@ -2,6 +2,7 @@ from app.agent.state import AgentState, Attempt, AttemptOutcome, ExecutionObserv
 from app.config import Settings, settings
 from app.sandbox.executor import DockerSandboxExecutor
 from app.agent.llm import generate_code
+from app.agent.llm import generate_code, validate_output
 
 class AgentController:
     def __init__(self, app_settings: Settings = settings) -> None:
@@ -94,10 +95,11 @@ class AgentController:
         state: AgentState,
         observation: ExecutionObservation,
     ) -> bool:
-        raise NotImplementedError(
-            "Phase 4 implements result validation. "
-            "The controller loop is wired, but validation is not available yet."
+        is_valid, reason = validate_output(
+            state.task, observation.stdout, observation.generated_files
         )
+        self._last_validation_reason = reason
+        return is_valid
 
     def _diagnose_runtime_error(self, observation: ExecutionObservation) -> str:
         if observation.timed_out:
@@ -107,6 +109,4 @@ class AgentController:
         return f"Runtime error with exit code {observation.exit_code}."
 
     def _diagnose_invalid_result(self, observation: ExecutionObservation) -> str:
-        if not observation.generated_files:
-            return "Execution completed, but no generated files were found."
-        return "Execution completed, but generated outputs did not pass validation."
+        return f"Output did not satisfy the task: {self._last_validation_reason}"

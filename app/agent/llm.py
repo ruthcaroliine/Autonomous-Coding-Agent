@@ -14,3 +14,23 @@ def generate_code(task: str, prior_diagnosis: str | None = None) -> str:
 
     response = _model.generate_content(prompt)
     return response.text.strip()
+
+def validate_output(task: str, stdout: str, generated_files: list[str]) -> tuple[bool, str]:
+    files_note = f"\nGenerated files: {', '.join(generated_files)}" if generated_files else ""
+    prompt = (
+        f"Task: {task}\n"
+        f"Program output (stdout):\n{stdout}\n"
+        f"{files_note}\n\n"
+        "Does this output correctly and completely satisfy the task? "
+        "Respond with exactly one line in this format:\n"
+        "VALID: yes\n"
+        "or\n"
+        "VALID: no - <short reason>"
+    )
+    response = _model.generate_content(prompt)
+    text = response.text.strip()
+
+    if text.lower().startswith("valid: yes"):
+        return True, ""
+    reason = text.split("-", 1)[1].strip() if "-" in text else text
+    return False, reason

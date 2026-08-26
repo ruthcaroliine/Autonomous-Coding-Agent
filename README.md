@@ -17,17 +17,22 @@ The goal is to build a portfolio-grade agentic system that demonstrates practica
 
 ## Current Status
 
-This repository is being developed in stages. The initial focus is the backend agent loop and Docker sandbox before adding a polished UI.
+| Phase | Area | Status |
+| --- | --- | --- |
+| 1 | Repository scaffold + FastAPI backend | Done |
+| 2 | Docker sandbox execution | Done |
+| 3 | LLM code generation (Gemini) | Done |
+| 4 | Result validation | In progress |
+| 5 | Task queue + concurrent worker pool | Planned |
+| 6 | Task state persistence (survives restarts) | Planned |
+| 7 | Controlled tool set (execute_code, list_files, read_file) | Planned |
+| 8 | Frontend demo | Planned |
 
-| Area | Status |
-| --- | --- |
-| Repository scaffold | Scaffolded |
-| FastAPI backend | Skeleton implemented |
-| LLM code generation | Planned |
-| Docker sandbox execution | Planned |
-| Retry/self-correction loop | Stubbed control flow |
-| Result validation | Planned |
-| Frontend demo | Planned |
+
+## Evolving Toward a Task Scheduling System
+
+Beyond phase 4, this project is expanding from a single-task agent loop into a small distributed task scheduler: a queue of jobs, a pool of workers executing sandboxed tasks concurrently, an explicit task state machine (`QUEUED → RUNNING → SUCCEEDED/FAILED → RETRYING`), and persisted state so runs survive a restart. The retry/timeout/resource-limit work from phases 1–3 already covers a meaningful part of this.
+
 
 ## Core Agent Loop
 
