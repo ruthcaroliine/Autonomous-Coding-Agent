@@ -136,7 +136,15 @@ class DockerSandboxExecutor:
         return sorted(generated_files)
 
     def _is_wait_timeout(self, exc: Exception) -> bool:
-        return exc.__class__.__name__ in {"ReadTimeout", "Timeout", "TimeoutError"}
+        timeout_names = {"ReadTimeout", "Timeout", "TimeoutError", "ConnectionError", "ReadTimeoutError"}
+        current = exc
+        seen = set()
+        while current is not None and id(current) not in seen:
+            seen.add(id(current))
+            if current.__class__.__name__ in timeout_names:
+                return True
+            current = current.__cause__
+        return False
 
     def _append_stderr_note(self, stderr: str, note: str) -> str:
         if stderr and not stderr.endswith("\n"):

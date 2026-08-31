@@ -3,13 +3,18 @@ from enum import StrEnum
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
-
+from enum import Enum
 
 class AttemptOutcome(StrEnum):
     SUCCESS = "success"
     RUNTIME_ERROR = "runtime_error"
     INVALID_RESULT = "invalid_result"
 
+class RunStatus(str, Enum):
+    PENDING = "pending"
+    RUNNING = "running"
+    SUCCEEDED = "succeeded"
+    FAILED = "failed"
 
 class ExecutionObservation(BaseModel):
     stdout: str = ""
@@ -43,6 +48,7 @@ class AgentState(BaseModel):
     max_retry_attempts: int
     final_answer: str | None = None
     succeeded: bool = False
+    status: RunStatus = RunStatus.PENDING
 
     @property
     def attempts_used(self) -> int:

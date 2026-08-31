@@ -7,6 +7,7 @@ from uuid import uuid4
 from app.agent.controller import AgentController
 from app.agent.state import AgentState
 from app.config import settings
+from app.agent.state import AgentState, RunStatus
 
 
 class TaskScheduler:
@@ -32,11 +33,21 @@ class TaskScheduler:
         return run_id
 
     def _execute(self, run_id: str, task: str) -> None:
-        controller = AgentController()
-        result_state = controller.run(task)
-        result_state.run_id = run_id  # keep the id assigned at submit time
         with self._lock:
-            self._jobs[run_id] = result_state
+            self._jobs[run_id].status = RunStatus.RUNNING
+
+        controller = AgentController()
+        try:
+            result_state = controller.run(task)
+            result_state.run_id = run_id
+            result_state.status = RunStatus.SUCCEEDED if result_state.succeeded else RunStatus.FAILED
+            with self._lock:
+                self._jobs[run_id] = result_state
+        except Exception as exc:
+            with self._lock:
+                failed_state = self._jobs[run_id]
+                failed_state.status = RunStatus.FAILED
+                failed_state.final_answer = f"Worker error: {exc}"
 
     def get_status(self, run_id: str) -> AgentState | None:
         with self._lock:
